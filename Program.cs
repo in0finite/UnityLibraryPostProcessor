@@ -54,8 +54,9 @@ namespace UnityLibraryPostProcessor
 
 				string unityEngineDllPath = System.IO.Path.Combine( unityInstallationPath, "Editor/Data/Managed/UnityEngine.dll" );
 				string unityNetworkingDllPath = System.IO.Path.Combine( unityInstallationPath, "Editor/Data/UnityExtensions/Unity/Networking/UnityEngine.Networking.dll");
-				Action<string> warningAction = (string msg) => { Console.WriteLine("warning: " + msg); };
-				Action<string> errorAction = (string msg) => { Console.WriteLine("error: " + msg); returnValue = 1; };
+				int numWarnings = 0, numErrors = 0;
+				Action<string> warningAction = (string msg) => { Console.WriteLine("warning: " + msg); numWarnings++; };
+				Action<string> errorAction = (string msg) => { Console.WriteLine("error: " + msg); returnValue = 1; numErrors++; };
 
 				Console.WriteLine();
 
@@ -65,8 +66,11 @@ namespace UnityLibraryPostProcessor
 
 
 				Console.WriteLine();
-				Console.WriteLine("Done");
-				Console.WriteLine("New assembly should have been created: " + newInputAssemblyPath);
+				Console.WriteLine("Done, warnings: " + numWarnings + " errors: " + numErrors);
+				if(numErrors > 0)
+					Console.WriteLine("Weaver reported some errors. Failed to build assembly.");
+				else
+					Console.WriteLine("New assembly should have been created: " + newInputAssemblyPath);
 
 			} catch(Exception ex) {
 				Console.WriteLine (ex.ToString ());
