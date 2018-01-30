@@ -39,7 +39,7 @@ namespace UnityLibraryPostProcessor
 				}
 
 				// name of input assembly must start with "Assembly-"
-				string newInputAssemblyPath = System.IO.Path.Combine( System.IO.Path.GetDirectoryName(inputAssemblyPath), "Assembly-", System.IO.Path.GetFileName(inputAssemblyPath) );
+				string newInputAssemblyPath = System.IO.Path.Combine( System.IO.Path.GetDirectoryName(inputAssemblyPath), "Assembly-" ) + System.IO.Path.GetFileName(inputAssemblyPath) ;
 				Console.WriteLine("Copying input assembly (because it's name must start with 'Assembly-') to " + newInputAssemblyPath);
 				System.IO.File.Copy( inputAssemblyPath, newInputAssemblyPath, true );
 
@@ -66,6 +66,7 @@ namespace UnityLibraryPostProcessor
 
 				Console.WriteLine();
 				Console.WriteLine("Done");
+				Console.WriteLine("New assembly should have been created: " + newInputAssemblyPath);
 
 			} catch(Exception ex) {
 				Console.WriteLine (ex.ToString ());
