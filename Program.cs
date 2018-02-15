@@ -40,8 +40,12 @@ namespace UnityLibraryPostProcessor
 
 				// name of input assembly must start with "Assembly-"
 				string newInputAssemblyPath = System.IO.Path.Combine( System.IO.Path.GetDirectoryName(inputAssemblyPath), "Assembly-" ) + System.IO.Path.GetFileName(inputAssemblyPath) ;
-				Console.WriteLine("Copying input assembly (because it's name must start with 'Assembly-') to " + newInputAssemblyPath);
+				string mdbFilePath = inputAssemblyPath + ".mdb" ;
+				string newMdbFilePath = System.IO.Path.Combine( System.IO.Path.GetDirectoryName(mdbFilePath), "Assembly-" ) + System.IO.Path.GetFileName(mdbFilePath) ;
+				Console.WriteLine("Copying input assembly to " + newInputAssemblyPath);
 				System.IO.File.Copy( inputAssemblyPath, newInputAssemblyPath, true );
+				Console.WriteLine("Copying mdb file to " + newMdbFilePath);
+				System.IO.File.Copy( mdbFilePath, newMdbFilePath, true );
 
 				// invoke unet weaver
 				Console.WriteLine("Invoking unet weaver");
@@ -66,11 +70,26 @@ namespace UnityLibraryPostProcessor
 
 
 				Console.WriteLine();
-				Console.WriteLine("Done, warnings: " + numWarnings + " errors: " + numErrors);
+				Console.WriteLine("Weaver finished, warnings: " + numWarnings + " errors: " + numErrors);
+
 				if(numErrors > 0)
-					Console.WriteLine("Weaver reported some errors. Failed to build assembly.");
-				else
-					Console.WriteLine("New assembly should have been created: " + newInputAssemblyPath);
+					throw new Exception("Weaver reported some errors. Failed to build assembly.");
+				
+				Console.WriteLine("Copying assembly");
+			//	Console.Read();
+				System.IO.File.Copy( newInputAssemblyPath, inputAssemblyPath, true );
+
+				// delete temporary files
+				// ignore errors
+				Console.WriteLine("Deleting temporary files");
+			//	Console.Read();
+				try {
+					System.IO.File.Delete( newInputAssemblyPath );
+					System.IO.File.Delete( newMdbFilePath );
+				} catch(Exception ex) {}
+
+
+				Console.WriteLine("Done");
 
 			} catch(Exception ex) {
 				Console.WriteLine (ex.ToString ());
